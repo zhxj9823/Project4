@@ -7,7 +7,7 @@
 // table constructor
 Table::Table()
 {
-	// set ball colours
+	// set ball colours 16个小球的颜色都不同
 	balls[0].setColour(0.9, 0.9, 0.9); // white
 	balls[1].setColour(1.0, 0.9, 0.2); // yellow
 	balls[2].setColour(0.1, 0.2, 0.7); // dark blue
