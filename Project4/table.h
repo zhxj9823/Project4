@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ball.h"
 class Table
 {
 	Ball balls[16];    // 16 balls
