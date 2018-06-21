@@ -3,7 +3,8 @@
 #include <math.h>
 #include <GL/glut.h>
 #include "ball.h"
-
+#include "state.h"
+bool who_play;
 // quadric object for GLU functions
 GLUquadricObj* quadricObject = NULL;
 
@@ -155,13 +156,17 @@ void Ball::collideHoles()
 	{ 0, 2 },
 	{ 0, -2 }
 	};
-
+	bool flag = false;
 	// for each hole
 	for (int i = 0; i < 6; i++)
 	{
 		// check distance to hole
-		if (distanceTo(holes[i][0], holes[i][1]) < 0.3) visible = false;//进洞判断，设置成不可见
+		if (distanceTo(holes[i][0], holes[i][1]) < 0.3) {
+			visible = false;//进洞判断，设置成不可见
+			//flag = true;//有球进了
+		}
 	}
+	//if (!flag) who_play = !who_play;
 }
 
 // collide with table cushions
