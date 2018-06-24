@@ -129,7 +129,7 @@ void Table::shoot()
 	double a = stickAngle * pi / 180 + pi;
 	// set cue ball speed along the stick
 	balls[0].setSpeed(s * sin(a), s * cos(a));
-	printf("player1:%d   player2:%d\n", scores[0], scores[1]);
+	//printf("player1:%d   player2:%d\n", scores[0], scores[1]);
 }
 
 // update balls
@@ -253,6 +253,36 @@ void drawString(const char* str) {
 		glCallList(lists + *str);
 }
 
+void Table::paintScore() {
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, 1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str1[100] = "P1:";
+	char temp1[1000];
+	sprintf_s(temp1, "%d", scores[0]);
+	strcat_s(str1, temp1);
+	//glTranslated(0,0, 0);
+	drawString(str1);
+	glPopMatrix();
+
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, -1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str2[1000] = "P2:";
+	char temp[100];
+
+	sprintf_s(temp, "%d", scores[1]);
+	strcat_s(str2, temp);
+	//glTranslated(0,0, 0);
+	drawString(str2);
+	glPopMatrix();
+}
 void drawPlayer() {
 
 	if (table.getPlayer() == 1) {
@@ -341,7 +371,7 @@ void Table::draw()
 	glPopMatrix();
 
 	drawPlayer();
-
+	paintScore();
 	// draw 3 lamps
 	for (int i = -1; i <= 1; i++)
 	{

@@ -13,6 +13,7 @@ class Table
 
 public:
 	Table();
+	void paintScore();
 	void setStickAngle(double angle);
 	int getPlayer();
 	void switchPlayer();
