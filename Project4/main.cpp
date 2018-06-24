@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <math.h>
 #include <GL/glut.h>
@@ -146,7 +145,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(1280, 720);//窗口大小	
 	glutCreateWindow("Billiard Ball game"); //窗口名字
 
-											// register callbacks 注册一些列回调函数
+	// register callbacks 注册一些列回调函数
 	glutKeyboardFunc(keyboard);//键盘功能
 	glutSpecialFunc(special);//响应键盘方向控制键
 	glutMouseFunc(mouse);//鼠标功能
