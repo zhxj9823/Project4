@@ -23,6 +23,7 @@ public:
 	bool moving();
 	void shoot();
 	void update(int currentTime);
+	void paintScore();
 	void draw();
 	void restore();
 	void renew();

@@ -253,6 +253,37 @@ void drawString(const char* str) {
 		glCallList(lists + *str);
 }
 
+void Table::paintScore() {
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, 1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str1[100] = "P1:";
+	char temp1[1000];
+	sprintf_s(temp1, "%d", scores[0]);
+	strcat_s(str1, temp1);
+	//glTranslated(0,0, 0);
+	drawString(str1);
+	glPopMatrix();
+
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, -1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str2[1000] = "P2:";
+	char temp[100];
+
+	sprintf_s(temp, "%d", scores[1]);
+	strcat_s(str2, temp);
+	//glTranslated(0,0, 0);
+	drawString(str2);
+	glPopMatrix();
+}
+
 void drawPlayer() {
 
 	if (table.getPlayer() == 1) {
@@ -318,8 +349,6 @@ void Table::draw()
 	glTranslated(0, 0, +20); drawCuboid(20, 20, 0.1);
 	glPopMatrix();
 
-	//TODO
-
 	// 绘制计分板
 	glColor3d(0.0, 0.0, 0.0); // black
 	glPushMatrix();
@@ -341,6 +370,7 @@ void Table::draw()
 	glPopMatrix();
 
 	drawPlayer();
+	paintScore();
 
 	// draw 3 lamps
 	for (int i = -1; i <= 1; i++)
