@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <GL/glut.h>
 #include "ball.h"
@@ -50,12 +51,56 @@ void special(int key, int x, int y)//上下左右方向键控制摄像机角度，实现位置变换
 	if (cameraAngle2 < 10) cameraAngle2 = 10;//防止钻到桌底和超过天花板
 	if (cameraAngle2 > 80) cameraAngle2 = 80;
 }
+void selectMyFont(int size, int charset, const char* face) {
+	HFONT hFont = CreateFontA(size, 0, 0, 0, FW_MEDIUM, 0, 0, 0,
+		charset, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+		DEFAULT_QUALITY, DEFAULT_PITCH | FF_SWISS, face);
+	HFONT hOldFont = (HFONT)SelectObject(wglGetCurrentDC(), hFont);
+	DeleteObject(hOldFont);
+}
+void drawTextString(const char* str) {
+	static int isFirstCall = 1;
+	static GLuint lists;
 
+	if (isFirstCall) { // 如果是第一次调用，执行初始化
+					   // 为每一个ASCII字符产生一个显示列表
+		isFirstCall = 0;
+
+		// 申请MAX_CHAR个连续的显示列表编号
+		lists = glGenLists(MAX_CHAR);
+
+		// 把每个字符的绘制命令都装到对应的显示列表中
+		wglUseFontBitmaps(wglGetCurrentDC(), 0, MAX_CHAR, lists);
+	}
+	// 调用每个字符对应的显示列表，绘制每个字符
+	for (; *str != '\0'; ++str)
+		glCallList(lists + *str);
+}
+
+//void paintSpeed(double speed) {
+//	glPushMatrix();
+//	selectMyFont(24, ANSI_CHARSET, "Comic Sans MS");
+//	//glClear(GL_COLOR_BUFFER_BIT);
+//	//glColor3f(0.5f, 0.0f, 0.0f);
+//	//glRasterPos3f(-4.5f, 0.2f, 1.0f);// 高度
+//	//glTranslated(-3, 0, 0);
+//	char str1[100] = "Speed:";
+//	char temp1[1000];
+//	int percent = (int)(speed / 18 * 100);
+//	printf("%d\n", percent);
+//	sprintf_s(temp1, "%d", percent);
+//	strcat_s(str1, temp1);
+//	//glTranslated(0,0, 0);
+//	drawTextString(str1);
+//	glPopMatrix();
+//
+//}
 void timer(int timerid)
 {
 	if (timers == 1 && value == 1)
 	{
 		speed += 0.3;
+		//paintSpeed(speed);
 	}
 	else if (timers == 2 && value == 1)
 	{
@@ -65,8 +110,8 @@ void timer(int timerid)
 
 	if (timers == 1) value = 1;
 	else if (timers == 2) value = 2;
-
-	glutTimerFunc(10, timer, 1);
+	
+	glutTimerFunc(10, timer, 1);//10 ms 
 }
 
 // handle mouse clicks

@@ -122,16 +122,6 @@ bool Table::moving()
 	return false;
 }
 
-// shoot cue ball
-void Table::shoot()
-{
-	isPlay = true;
-	double a = stickAngle * pi / 180 + pi;
-	if (speed > 18) speed = 18;
-	//double speed = 18;
-	// set cue ball speed along the stick
-	balls[0].setSpeed(speed * sin(a), speed * cos(a));
-}
 
 // update balls
 void Table::update(int currentTime)
@@ -329,6 +319,26 @@ void drawPlayer() {
 	}
 
 }
+void paintSpeed(double speed) {
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0f, 0.6f, 0.8f);
+	glRasterPos3f(-4.5f, 1.3f, 2.0f);// ¸ß¶È
+	glTranslated(-3, 0, 0);
+	char str1[100] = "Speed:";
+	char temp1[1000];
+	if (speed > 18)speed = 18;
+	if (speed <= 5) speed = 0;
+	int percent = (int)(speed / 18 * 100);
+	//printf("%d\n", percent);
+	sprintf_s(temp1, "%d", percent);
+	strcat_s(str1, temp1);
+	//glTranslated(0,0, 0);
+	drawString(str1);
+	glPopMatrix();
+
+}
 // draw table
 void Table::draw()
 {
@@ -372,7 +382,7 @@ void Table::draw()
 
 	drawPlayer();
 	paintScore();
-
+	paintSpeed(speed);
 	// draw 3 lamps
 	for (int i = -1; i <= 1; i++)
 	{
@@ -524,4 +534,19 @@ void Table::renew()
 		balls[i].setoPosition(balls[i].getX(), balls[i].getZ());
 		balls[i].setoVisible(balls[i].getVisible());
 	}
+}
+
+
+
+
+// shoot cue ball
+void Table::shoot()
+{
+	isPlay = true;
+	double a = stickAngle * pi / 180 + pi;
+	if (speed > 18) speed = 18;
+
+	//double speed = 18;
+	// set cue ball speed along the stick
+	balls[0].setSpeed(speed * sin(a), speed * cos(a));
 }
