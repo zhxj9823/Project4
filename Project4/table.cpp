@@ -5,6 +5,7 @@
 #include "table.h"
 
 extern Table table;
+extern double speed;
 
 // table constructor
 Table::Table()
@@ -125,11 +126,11 @@ bool Table::moving()
 void Table::shoot()
 {
 	isPlay = true;
-	const double s = 18; // shooting speed
 	double a = stickAngle * pi / 180 + pi;
+	if (speed > 18) speed = 18;
+	//double speed = 18;
 	// set cue ball speed along the stick
-	balls[0].setSpeed(s * sin(a), s * cos(a));
-	printf("player1:%d   player2:%d\n", scores[0], scores[1]);
+	balls[0].setSpeed(speed * sin(a), speed * cos(a));
 }
 
 // update balls

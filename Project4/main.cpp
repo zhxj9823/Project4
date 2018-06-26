@@ -5,6 +5,9 @@
 #include "table.h"
 
 Table table;
+int value = 2;
+int timers;
+double speed = 1;
 double cameraAngle1 = -90;//平面角度
 double cameraAngle2 = 25;//俯看角度
 
@@ -48,13 +51,34 @@ void special(int key, int x, int y)//上下左右方向键控制摄像机角度，实现位置变换
 	if (cameraAngle2 > 80) cameraAngle2 = 80;
 }
 
+void timer(int timerid)
+{
+	if (timers == 1 && value == 1)
+	{
+		speed += 0.3;
+	}
+	else if (timers == 2 && value == 1)
+	{
+		if (!table.moving()) table.shoot();
+		speed = 1;
+	}
+
+	if (timers == 1) value = 1;
+	else if (timers == 2) value = 2;
+
+	glutTimerFunc(10, timer, 1);
+}
+
 // handle mouse clicks
 void mouse(int button, int state, int x, int y)//鼠标监听事件
 {
-	// shoot by clicking
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) //如果鼠标左键单击并且按下
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) //如果鼠标左键单击并且按下,开始计时
 	{
-		if (!table.moving()) table.shoot(); //球不在移动，射击
+		timers = 1;
+	}
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		timers = 2;
 	}
 }
 
@@ -151,7 +175,7 @@ int main(int argc, char* argv[])
 	glutMouseFunc(mouse);//鼠标功能
 	glutPassiveMotionFunc(passive);//相应鼠标没有被按下去时，移到鼠标的情形
 	glutDisplayFunc(display);//显示当前窗口
-
+	glutTimerFunc(10, timer, 1);
 	quadricObject = gluNewQuadric();
 	glutMainLoop();//程序进入事件处理循环。该函数必须是main主函数的最后一条语句。
 	return 0;
