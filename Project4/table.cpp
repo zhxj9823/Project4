@@ -249,7 +249,7 @@ void Table::paintScore() {
 	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 	//glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.5f, 0.5f, 0.5f);
-	glRasterPos3f(-4.5f, 0.2f, 1.0f);// 高度
+	glRasterPos3f(-4.5f, 0.4f, 2.0f);// 高度
 	glTranslated(-3, 0, 0);
 	char str1[100] = "P1:";
 	char temp1[1000];
@@ -263,7 +263,7 @@ void Table::paintScore() {
 	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 	//glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.5f, 0.5f, 0.5f);
-	glRasterPos3f(-4.5f, 0.2f, -1.0f);// 高度
+	glRasterPos3f(-4.5f, 0.4f, -1.5f);// 高度
 	glTranslated(-3, 0, 0);
 	char str2[1000] = "P2:";
 	char temp[100];
@@ -282,19 +282,20 @@ void drawPlayer() {
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(0.5f, 0.5f, 0.5f);
-		glRasterPos3f(-5.0f, 0.5f, 0.5f);// 高度
+		glRasterPos3f(-4.5f, 1.0f, -1.2f);// 高度
 		glTranslated(-3, 0, 0);
 		//glTranslated(0,0, 0);
-		drawString("Player 1");
+		drawString("Player 2");
 		glPopMatrix();
 
 		glPushMatrix();
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1.0f, 0.0f, 0.0f);
-		glRasterPos3f(-5.0f, 1.0f, 0.5f);
+		glRasterPos3f(-4.5f, 1.0f, 2.1f);// 高度
+		//glRasterPos3f(-5.0f, 1.0f, 0.5f);
 		//glTranslated(0,0, 0);
-		drawString("Player 2");
+		drawString("Player 1");
 		glPopMatrix();
 	}
 	else if (table.getPlayer() == 0) {
@@ -302,19 +303,20 @@ void drawPlayer() {
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1.0f, 0.0f, 0.0f);
-		glRasterPos3f(-5.0f, 0.5f, 0.5f);// 高度
+		glRasterPos3f(-4.5f, 1.0f, -1.2f);// 高度
+		//glRasterPos3f(-5.0f, 0.5f, 0.5f);// 高度
 		glTranslated(-3, 0, 0);
 		//glTranslated(0,0, 0);
-		drawString("Player 1");
+		drawString("Player 2");
 		glPopMatrix();
 
 		glPushMatrix();
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(0.5f, 0.5f, 0.5f);
-		glRasterPos3f(-5.0f, 1.0f, 0.5f);
+		glRasterPos3f(-4.5f, 1.0f, 2.1f);// 高度
 		//glTranslated(0,0, 0);
-		drawString("Player 2");
+		drawString("Player 1");
 		glPopMatrix();
 	}
 
@@ -324,7 +326,7 @@ void paintSpeed(double speed) {
 	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 	//glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0f, 0.6f, 0.8f);
-	glRasterPos3f(-4.5f, 1.3f, 2.0f);// 高度
+	glRasterPos3f(-4.5f, 0.7f, 0.5f);// 高度
 	glTranslated(-3, 0, 0);
 	char str1[100] = "Speed:";
 	char temp1[1000];
@@ -334,7 +336,7 @@ void paintSpeed(double speed) {
 	//printf("%d\n", percent);
 	sprintf_s(temp1, "%d", percent);
 	strcat_s(str1, temp1);
-	//glTranslated(0,0, 0);
+	//glTranslated(0,0, 0); 
 	drawString(str1);
 	glPopMatrix();
 
