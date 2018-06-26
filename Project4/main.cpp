@@ -3,7 +3,10 @@
 #include <GL/glut.h>
 #include "ball.h"
 #include "table.h"
-
+#include <stdio.h>
+#include <ctime> 
+#include <windows.h>
+int stickTime;
 Table table;
 double cameraAngle1 = -90;//平面角度
 double cameraAngle2 = 25;//俯看角度
@@ -47,14 +50,37 @@ void special(int key, int x, int y)//上下左右方向键控制摄像机角度，实现位置变换
 	if (cameraAngle2 < 10) cameraAngle2 = 10;//防止钻到桌底和超过天花板
 	if (cameraAngle2 > 80) cameraAngle2 = 80;
 }
-
+double start = 0;
+double end = 0;
 // handle mouse clicks
 void mouse(int button, int state, int x, int y)//鼠标监听事件
 {
 	// shoot by clicking
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) //如果鼠标左键单击并且按下
+
+
+	if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) //如果鼠标左键单击并且按下
 	{
-		if (!table.moving()) table.shoot(); //球不在移动，射击
+		if (!table.moving()) {
+		
+			stickTime = 18000;
+			SYSTEMTIME sys;
+			GetLocalTime(&sys);
+			//printf("%4d/%02d/%02d %02d:%02d:%02d.%03d 星期%1d/n", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds, sys.wDayOfWeek);
+			start = sys.wMinute * 60 * 1000 + sys.wSecond * 1000 + sys.wMilliseconds;
+			printf("%lf", start);
+		} 
+	}
+	if (state == GLUT_UP&&stickTime) {
+		SYSTEMTIME sys;
+		GetLocalTime(&sys);
+		//printf("%4d/%02d/%02d %02d:%02d:%02d.%03d 星期%1d/n", sys.wYear, sys.wMonth, sys.wDay, sys.wHour, sys.wMinute, sys.wSecond, sys.wMilliseconds, sys.wDayOfWeek);
+		end = sys.wMinute * 60 * 1000 + sys.wSecond * 1000 + sys.wMilliseconds ;
+		stickTime = (int)(fabs(start - end))/50;
+		printf("end=%lf,end-start=%lf,stick=%d", end,start-end,stickTime);
+		//stickTime = end - start;
+		//printf("%lf", stickTime);
+		table.shoot(stickTime); //球不在移动，射击
+		stickTime = 0;
 	}
 }
 

@@ -122,10 +122,11 @@ bool Table::moving()
 }
 
 // shoot cue ball
-void Table::shoot()
+void Table::shoot(double speed)
 {
 	isPlay = true;
-	const double s = 18; // shooting speed
+	
+	double s = speed; // shooting speed
 	double a = stickAngle * pi / 180 + pi;
 	// set cue ball speed along the stick
 	balls[0].setSpeed(s * sin(a), s * cos(a));

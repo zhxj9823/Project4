@@ -22,7 +22,7 @@ public:
 	void reset();
 	int visibleNumber();
 	bool moving();
-	void shoot();
+	void shoot(double);
 	void update(int currentTime);
 	void draw();
 	void restore();
