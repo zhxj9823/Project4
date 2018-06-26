@@ -1,10 +1,11 @@
-
 #include <stdlib.h>
 #include <math.h>
 #include <GL/glut.h>
 #include "ball.h"
-#include "state.h"
-bool who_play;
+#include "table.h"
+
+extern Table table;
+
 // quadric object for GLU functions
 GLUquadricObj* quadricObject = NULL;
 
@@ -70,8 +71,11 @@ Ball::Ball()
 {
 	setColour(0, 0, 0);
 	setPosition(0, 0);
+	setoPosition(0, 0);
 	setSpeed(0, 0);
 	setVisible(true);
+	setoVisible(true);
+	setScore(1);
 	radius = 0.1;
 }
 
@@ -90,6 +94,12 @@ void Ball::setPosition(double x0, double z0)
 	z = z0;
 }
 
+void Ball::setoPosition(double x0, double z0)
+{
+	ox = x0;
+	oz = z0;
+}
+
 // return ball position
 double Ball::getX()
 {
@@ -100,6 +110,18 @@ double Ball::getX()
 double Ball::getZ()
 {
 	return z;
+}
+
+// return ball original position
+double Ball::getoX()
+{
+	return ox;
+}
+
+// return ball original position
+double Ball::getoZ()
+{
+	return oz;
 }
 
 // change ball speed
@@ -119,6 +141,28 @@ void Ball::setVisible(bool v)//是否可见
 bool Ball::getVisible()
 {
 	return visible;
+}
+
+// change ball original visibility state
+void Ball::setoVisible(bool v)//是否可见
+{
+	ovisible = v;
+}
+
+// return ball original visibility state
+bool Ball::getoVisible()
+{
+	return ovisible;
+}
+
+int Ball::getScore()
+{
+	return score;
+}
+
+void Ball::setScore(int dscore)
+{
+	score = dscore;
 }
 
 // return ball radius
@@ -150,23 +194,23 @@ void Ball::collideHoles()
 	double holes[6][2] =
 	{
 		{ 4, 2 },
-	{ 4, -2 },
-	{ -4, 2 },
-	{ -4, -2 },
-	{ 0, 2 },
-	{ 0, -2 }
+	    { 4, -2 },
+	    { -4, 2 },
+	    { -4, -2 },
+	    { 0, 2 },
+	    { 0, -2 }
 	};
-	bool flag = false;
+	int i;
 	// for each hole
-	for (int i = 0; i < 6; i++)
+	for (i = 0; i < 6; i++)
 	{
 		// check distance to hole
-		if (distanceTo(holes[i][0], holes[i][1]) < 0.3) {
+		if (distanceTo(holes[i][0], holes[i][1]) < 0.3 && visible) {			
+			table.setScores(table.getPlayer(), score);
 			visible = false;//进洞判断，设置成不可见
-			//flag = true;//有球进了
+			break;
 		}
 	}
-	//if (!flag) who_play = !who_play;
 }
 
 // collide with table cushions
@@ -271,4 +315,20 @@ void Ball::draw()//画球
 	glRotated(180, 1, 0, 0);
 	drawSphere(radius);
 	glPopMatrix();
+}
+
+void Ball::resetPosition()
+{
+	x = ox;
+	z = oz;
+}
+
+
+void Ball::resetVisible()
+{
+	if (visible== false && ovisible == true && score > 0)
+	{
+		table.setScores(table.getPlayer(), -score);
+	}
+	visible = ovisible;
 }

@@ -1,14 +1,11 @@
-
+#include <stdio.h>
 #include <math.h>
 #include <GL/glut.h>
 #include "ball.h"
 #include "table.h"
-extern bool who_play;
-unsigned int currentNumber = 16;
-bool canchange = false;
-bool is_foul = false;
-bool start_play = false;
-#define MAX_CHAR 128
+
+extern Table table;
+
 // table constructor
 Table::Table()
 {
@@ -30,10 +27,15 @@ Table::Table()
 	balls[14].setColour(0.0, 0.3, 0.2); // dark green
 	balls[15].setColour(0.5, 0.0, 0.0); // dark red
 
-										// initialise
+	// initialize
 	time = 0;
 	stickAngle = 90;
+	player = 0;
+	curNumber = 16;
+	isPlay = false;
+	isChange = false;
 	reset();
+	balls[0].setScore(-1);
 }
 
 // change stick angle
@@ -42,14 +44,36 @@ void Table::setStickAngle(double angle)
 	stickAngle = angle;
 }
 
+int Table::getPlayer()
+{
+	return player;
+}
+
+void Table::switchPlayer()
+{
+	player = !player;
+}
+
+int Table::getScores(int player)
+{
+	return scores[player];
+}
+
+void Table::setScores(int player, int offset)
+{
+	scores[player] += offset;	
+}
+
 // reset game state
 void Table::reset()
 {
-	start_play = false;
+	isPlay = false;
 	// initial position for cue ball
 	balls[0].setPosition(2, 0);
+	balls[0].setoPosition(2, 0);
 	balls[0].setSpeed(0, 0);
 	balls[0].setVisible(true);
+	balls[0].setoVisible(true);
 
 	// initial position for other balls
 	int k = 1;
@@ -62,11 +86,15 @@ void Table::reset()
 			double x = (6 - i * 2) * r - 2;
 			double z = (j * 2 - i - 1) * r;
 			balls[k].setPosition(x, z);
+			balls[k].setoPosition(x, z);
 			balls[k].setSpeed(0, 0);
 			balls[k].setVisible(true);
+			balls[k].setoVisible(true);
 			k++;
 		}
 	}
+	scores[0] = 0;
+	scores[1] = 0;
 }
 
 // return number of visible balls
@@ -96,13 +124,12 @@ bool Table::moving()
 // shoot cue ball
 void Table::shoot()
 {
-	start_play = true;
+	isPlay = true;
 	const double s = 18; // shooting speed
-	const double pi = 3.14159265358979;
 	double a = stickAngle * pi / 180 + pi;
-	//canchange = true;
 	// set cue ball speed along the stick
 	balls[0].setSpeed(s * sin(a), s * cos(a));
+	//printf("player1:%d   player2:%d\n", scores[0], scores[1]);
 }
 
 // update balls
@@ -142,6 +169,8 @@ void Table::update(int currentTime)
 			balls[0].setPosition(0, 0);
 			balls[0].setSpeed(0, 0);
 			balls[0].setVisible(true);
+			restore();
+			table.switchPlayer();
 		}
 
 		// if all balls are hidden, reset the game
@@ -151,8 +180,7 @@ void Table::update(int currentTime)
 	}
 }
 
-
-//___________________________________绘制字体
+// 绘制字体
 void glDrawString(unsigned char *str)
 {
 	GLYPHMETRICSFLOAT pgmf[1];
@@ -198,12 +226,6 @@ void glDrawString(unsigned char *str)
 	}
 }
 
-
-//___________________________
-
-
-
-
 void selectFont(int size, int charset, const char* face) {
 	HFONT hFont = CreateFontA(size, 0, 0, 0, FW_MEDIUM, 0, 0, 0,
 		charset, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
@@ -231,9 +253,39 @@ void drawString(const char* str) {
 		glCallList(lists + *str);
 }
 
+void Table::paintScore() {
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, 1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str1[100] = "P1:";
+	char temp1[1000];
+	sprintf_s(temp1, "%d", scores[0]);
+	strcat_s(str1, temp1);
+	//glTranslated(0,0, 0);
+	drawString(str1);
+	glPopMatrix();
+
+	glPushMatrix();
+	selectFont(24, ANSI_CHARSET, "Comic Sans MS");
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glRasterPos3f(-4.5f, 0.2f, -1.0f);// 高度
+	glTranslated(-3, 0, 0);
+	char str2[1000] = "P2:";
+	char temp[100];
+
+	sprintf_s(temp, "%d", scores[1]);
+	strcat_s(str2, temp);
+	//glTranslated(0,0, 0);
+	drawString(str2);
+	glPopMatrix();
+}
 void drawPlayer() {
 
-	if (who_play == true) {
+	if (table.getPlayer() == 1) {
 		glPushMatrix();
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
@@ -253,7 +305,7 @@ void drawPlayer() {
 		drawString("Player 2");
 		glPopMatrix();
 	}
-	else if (who_play == 0) {
+	else if (table.getPlayer() == 0) {
 		glPushMatrix();
 		selectFont(24, ANSI_CHARSET, "Comic Sans MS");
 		//glClear(GL_COLOR_BUFFER_BIT);
@@ -318,11 +370,8 @@ void Table::draw()
 	glDrawString(cstr);
 	glPopMatrix();
 
-
 	drawPlayer();
-
-
-
+	paintScore();
 	// draw 3 lamps
 	for (int i = -1; i <= 1; i++)
 	{
@@ -351,7 +400,7 @@ void Table::draw()
 		drawCylinder(0.04, 0.04, 10);
 
 		glPopMatrix();
-	}
+			}
 
 	double hsize = 0.5; // hole size
 
@@ -426,17 +475,52 @@ void Table::draw()
 		glPopMatrix();
 	}
 
-	if (!moving()) {//所有球静止了
+	if (!moving()) 
+	{//所有球静止了
 
-		if (currentNumber == visibleNumber() && start_play&&canchange) {//犯规情况下，球个数不变；没打进，球个数不变这些情况都要交换球权
-			who_play = !who_play;//交换球权
+		if (curNumber == visibleNumber() && isPlay && isChange) {//犯规情况下，球个数不变；没打进，球个数不变这些情况都要交换球权
+			switchPlayer();//交换球权
+			renew(); //update the original position
 		}
-		else {
-			currentNumber = visibleNumber();//更新当前数量的球	
-		}
-		canchange = false;//防止重复更新
+		else 
+		{
+			if (balls[0].getVisible())
+			{
+				curNumber = visibleNumber();//更新当前数量的球	
+				renew();
+			}
+			else
+			{
+				restore();
+				switchPlayer();
+			}			
+		}			
+		isChange = false;//防止重复更新
 	}
-	else {
-		canchange = true;
+	else 
+	{
+		isChange = true;
+	}
+}
+
+// restore the last state
+void Table::restore()
+{
+	// restore all balls
+	for (int i = 0; i <= 15; i++)
+	{
+		balls[i].resetPosition();
+		balls[i].resetVisible();
+	}
+}
+
+// renew the state
+void Table::renew()
+{
+	// restore all balls
+	for (int i = 0; i <= 15; i++)
+	{
+		balls[i].setoPosition(balls[i].getX(), balls[i].getZ());
+		balls[i].setoVisible(balls[i].getVisible());
 	}
 }
